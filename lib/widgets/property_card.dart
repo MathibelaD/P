@@ -32,9 +32,19 @@ class PropertyCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 180,
-                  child: Image.network(
+                  child: Image.asset( // <--- CHANGED FROM Image.network to Image.asset
                     property.imageUrl,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback for missing local assets
+                      return Container(
+                        height: 180,
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                      );
+                    },
                   ),
                 ),
                 Positioned(
@@ -97,7 +107,7 @@ class PropertyCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '\$${property.price}/mo',
+                      '\R${property.price}/mo',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Colors.blueAccent,
