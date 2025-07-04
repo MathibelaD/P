@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+  final VoidCallback onLoginSuccess;
+
+  const LoginScreen({super.key, required this.onLoginSuccess});
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +89,7 @@ class LoginScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         // Add login logic later
+                      onLoginSuccess();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff4facfe),

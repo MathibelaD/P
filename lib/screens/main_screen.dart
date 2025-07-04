@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import '../models/property.dart';
 import 'login_screen.dart';
+import 'profile.dart';
 
 // import your other screens when you add them
 
@@ -16,6 +17,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  bool isLoggedIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,19 @@ class _MainScreenState extends State<MainScreen> {
       const Center(child: Text('Favorites')),
       const Center(child: Text('Add Listing')),
       const Center(child: Text('My Listings')),
-      const LoginScreen(),
+    isLoggedIn
+      ? ProfileScreen(
+          ownerName: 'Jane Doe',
+          ownerEmail: 'jane.doe@example.com',
+          avatarUrl: 'https://example.com/avatar.jpg',
+          totalListings: 12,
+          activeListings: 7,
+        )
+      : LoginScreen(onLoginSuccess: () {
+          setState(() {
+            isLoggedIn = true;
+          });
+        }),
     ];
 
     return Scaffold(
