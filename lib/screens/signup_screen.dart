@@ -14,9 +14,10 @@ class SignUpScreen extends StatelessWidget {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Center(
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 const Text(
@@ -39,9 +40,13 @@ class SignUpScreen extends StatelessWidget {
                   controller: nameController,
                   decoration: InputDecoration(
                     labelText: 'Full Name',
+                    labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
                     prefixIcon: const Icon(Icons.person),
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    fillColor: Colors.grey[300],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
@@ -53,9 +58,13 @@ class SignUpScreen extends StatelessWidget {
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
+                    labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
                     prefixIcon: const Icon(Icons.email),
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    fillColor: Colors.grey[300],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
@@ -68,9 +77,13 @@ class SignUpScreen extends StatelessWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    labelStyle: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
                     prefixIcon: const Icon(Icons.lock),
                     filled: true,
-                    fillColor: Colors.grey[200],
+                    fillColor: Colors.grey[300],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
@@ -93,7 +106,8 @@ class SignUpScreen extends StatelessWidget {
                     ),
                     child: const Text(
                       'Sign up',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 16,
+                      color: Colors.white),
                     ),
                   ),
                 ),
@@ -106,6 +120,10 @@ class SignUpScreen extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pop(); // go back to login
                       },
+                      style: TextButton.styleFrom(
+                          foregroundColor:
+                              Colors.blue[700], // Your desired text color here
+                        ),
                       child: const Text('Login'),
                     ),
                   ],
@@ -113,7 +131,7 @@ class SignUpScreen extends StatelessWidget {
               ],
             ),
           ),
-        ),
+        ),)
       ),
     );
   }
