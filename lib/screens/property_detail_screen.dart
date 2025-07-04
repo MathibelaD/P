@@ -27,8 +27,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(property.title),
-        backgroundColor: Colors.teal, // A pleasant color
+        title: Text(property.title,
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff4facfe), Color(0xff00f2fe)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -78,7 +87,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
-                      color: Colors.teal[700],
+                      color: Color(0xff4facfe),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -162,9 +171,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       children: property.amenities
                           .map((amenity) => Chip(
                                 label: Text(amenity),
-                                backgroundColor: Colors.teal[50],
-                                labelStyle: const TextStyle(color: Colors.teal),
-                                side: const BorderSide(color: Colors.teal),
+                                backgroundColor: Color(0xff4facfe),
+                                labelStyle: const TextStyle(color: Colors.white),
+                                side: const BorderSide(color: Color(0xff4facfe)),
                               ))
                           .toList(),
                     ),
