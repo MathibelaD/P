@@ -10,6 +10,7 @@ class PropertyProvider with ChangeNotifier {
       price: 1200,
       imageUrl: 'assets/images/image1.jpg',
       location: 'Cape Town',
+           type: "Apartment"
     ),
     Property(
       id: 'p2',
@@ -18,6 +19,7 @@ class PropertyProvider with ChangeNotifier {
       price: 2000,
       imageUrl: 'assets/images/image2.jpg',
       location: 'Pretoria',
+           type: "Apartment"
     ),
     Property(
       id: 'p3',
@@ -26,6 +28,7 @@ class PropertyProvider with ChangeNotifier {
       price: 2000,
       imageUrl: 'assets/images/image3.jpg',
       location: 'Johhanesburg',
+           type: "Apartment"
     ),
     Property(
       id: 'p4',
@@ -34,6 +37,7 @@ class PropertyProvider with ChangeNotifier {
       price: 2000,
       imageUrl: 'assets/images/image4.jpg',
       location: 'Soshanguve',
+           type: "Apartment"
     ),
   ];
 

@@ -5,6 +5,7 @@ class Property {
   final double price;
   final String imageUrl;
   final String location;
+  final String type;
 
   Property({
     required this.id,
@@ -13,5 +14,6 @@ class Property {
     required this.price,
     required this.imageUrl,
     required this.location,
+    required this.type,
   });
 }
