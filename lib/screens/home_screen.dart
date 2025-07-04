@@ -14,13 +14,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedFilter = 'All';
+  String searchQuery = '';
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     // Optionally filter the properties list
-    final filteredProperties = selectedFilter == 'All'
-        ? widget.properties
-        : widget.properties.where((p) => p.type == selectedFilter).toList();
+    final filteredProperties = widget.properties.where((p) {
+  final matchesFilter = selectedFilter == 'All' || (p.type.toLowerCase() == selectedFilter.toLowerCase());
+  final matchesSearch = p.title.toLowerCase().contains(searchQuery) ||
+                        p.location.toLowerCase().contains(searchQuery);
+  return matchesFilter && matchesSearch;
+}).toList();
+
+
+    @override
+    void dispose() {
+      searchController.dispose();
+      super.dispose();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -68,6 +80,29 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            child: TextField(
+              controller: searchController,
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search by title or location',
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+
           FilterBar(
             selectedFilter: selectedFilter,
             onFilterSelected: (filter) {
@@ -80,7 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: filteredProperties.length,
-              itemBuilder: (ctx, i) => PropertyCard(property: filteredProperties[i]),
+              itemBuilder: (ctx, i) =>
+                  PropertyCard(property: filteredProperties[i]),
             ),
           ),
         ],
