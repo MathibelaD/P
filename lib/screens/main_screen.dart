@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import '../models/property.dart';
+import 'login_screen.dart';
 
 // import your other screens when you add them
 
@@ -25,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
       const Center(child: Text('Favorites')),
       const Center(child: Text('Add Listing')),
       const Center(child: Text('My Listings')),
-      const Center(child: Text('Profile')),
+      const LoginScreen(),
     ];
 
     return Scaffold(
@@ -49,18 +50,12 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.favorite),
             label: 'Favorites',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            label: 'Add',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'Add'),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
             label: 'My Listings',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
