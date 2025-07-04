@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import './models/property.dart';
-import './screens/home_screen.dart';
+import './screens/main_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -52,7 +52,8 @@ class MyApp extends StatelessWidget {
       title: 'Rental App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.indigo),
-      home: HomeScreen(properties: properties),
+      // home: HomeScreen(properties: properties),
+     home: MainScreen(properties: properties),
     );
   }
 }
