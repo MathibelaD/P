@@ -13,7 +13,7 @@ class PropertyCard extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(
           PropertyDetailScreen.routeName,
-          arguments: property.id,
+          arguments: property,
         );
       },
       child: Card(
