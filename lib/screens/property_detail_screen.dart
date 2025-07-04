@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/property.dart';
 import 'package:url_launcher/url_launcher.dart'; // Keep this import for phone/email calls
-// import 'package:Maps_flutter/Maps_flutter.dart'; // Uncomment if you fix map setup
+import '../models/review.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
   static const routeName = '/property-detail';
@@ -203,6 +204,140 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             ),
             const Divider(height: 30, thickness: 1, indent: 16, endIndent: 16),
 
+// --- Reviews Section (Display Only) ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Reviews Header with count
+                  Text(
+                    'Reviews (${property.numberOfReviews ?? 0})', // Display count
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 10),
+                  // Display average rating if available
+                  if (property.averageRating != null && property.numberOfReviews != null && property.numberOfReviews! > 0)
+                    Row(
+                      children: [
+                        Text(
+                          property.averageRating!.toStringAsFixed(1),
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        RatingBarIndicator(
+                          rating: property.averageRating ?? 0.0,
+                          itemBuilder: (context, index) => const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          itemCount: 5,
+                          itemSize: 25.0,
+                          direction: Axis.horizontal,
+                        ),
+                        Text(' (${property.numberOfReviews} reviews)'),
+                      ],
+                    ),
+                  const SizedBox(height: 15),
+                  // List of actual reviews
+                  // Mock Future for demonstration if ReviewService is not set up yet
+                  FutureBuilder<List<Review>>(
+                    future: Future.value([ // Replace this with _reviewService.getReviewsForProperty(property.id)
+                      // Dummy Reviews for display
+                      Review(
+                        id: 'rev1',
+                        propertyId: property.id,
+                        userId: 'HappyRenter23',
+                        rating: 4.5,
+                        comment: 'Great place, very clean and spacious. Landlord was responsive!',
+                        date: DateTime(2025, 6, 15),
+                      ),
+                      Review(
+                        id: 'rev2',
+                        propertyId: property.id,
+                        userId: 'LocalExplorer',
+                        rating: 5.0,
+                        comment: 'Perfect location, close to everything. Enjoyed my stay!',
+                        date: DateTime(2025, 5, 20),
+                      ),
+                      Review(
+                        id: 'rev3',
+                        propertyId: property.id,
+                        userId: 'PreviousTenant',
+                        rating: 3.0,
+                        comment: 'Decent apartment, but maintenance sometimes took a while.',
+                        date: DateTime(2025, 4, 10),
+                      ),
+                    ]),
+                    // Original: future: _reviewService.getReviewsForProperty(property.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error loading reviews: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No reviews yet.'));
+                      } else {
+                        return ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(), // Important for nested scroll views
+                          shrinkWrap: true, // Important for nested scroll views
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final review = snapshot.data![index];
+                            return Card(
+                              margin: const EdgeInsets.symmetric(vertical: 8.0),
+                              elevation: 1, // Slightly raised card
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          review.userId, // Display user name/ID
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                        ),
+                                        RatingBarIndicator(
+                                          rating: review.rating,
+                                          itemBuilder: (context, index) => const Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          itemCount: 5,
+                                          itemSize: 18.0,
+                                          direction: Axis.horizontal,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '${review.date.day}/${review.date.month}/${review.date.year}', // Formatted date
+                                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    ),
+                                    if (review.comment != null && review.comment!.isNotEmpty)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          review.comment!,
+                                          style: const TextStyle(fontSize: 15),
+                                        ),
+                                      ),
+                                    // TODO: Add display for review images if applicable
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
             // --- Contact Information ---
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),

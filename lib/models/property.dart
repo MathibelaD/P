@@ -34,6 +34,8 @@ class Property {
   final double longitude; // New: For map integration
   final String contactPhoneNumber; // New: Landlord's phone number
   final String contactEmail; // New: Landlord's email
+  final int? numberOfReviews;
+  final double? averageRating;
 
   Property({
     required this.id,
@@ -51,5 +53,7 @@ class Property {
     required this.type,
     required this.contactPhoneNumber,
     required this.contactEmail,
+    this.numberOfReviews,
+    this.averageRating,
   });
 }
