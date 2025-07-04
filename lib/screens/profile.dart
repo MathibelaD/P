@@ -18,20 +18,24 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  print('avatarUrl: $avatarUrl');
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F5), // Light background for the whole screen
+      backgroundColor: Colors.white, // Light background for the whole screen
       appBar: AppBar(
         title: const Text(
           'My Profile',
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white, // White app bar
-        elevation: 0.5, // Subtle shadow for app bar
-        // No specific shape for a cleaner look, or just very slight curve
-        // shape: const RoundedRectangleBorder(
-        //   borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
-        // ),
+       flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff4facfe), Color(0xff00f2fe)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -41,6 +45,7 @@ class ProfileScreen extends StatelessWidget {
             Card(
               margin: const EdgeInsets.only(bottom: 24),
               elevation: 4, // Card elevation
+              color: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -59,12 +64,11 @@ class ProfileScreen extends StatelessWidget {
                         ],
                       ),
                       child: CircleAvatar(
-                        radius: 55, // Slightly larger avatar
-                        backgroundColor: Colors.white,
-                        backgroundImage: avatarUrl != null
-                            ? NetworkImage(avatarUrl!)
-                            : const AssetImage('assets/avatar_placeholder.png') as ImageProvider,
-                      ),
+  radius: 55,
+  backgroundColor: Colors.white,
+  backgroundImage: const AssetImage('assets/images/placeholder.png'),
+),
+
                     ),
                     const SizedBox(height: 20),
                     Text(
@@ -92,6 +96,7 @@ class ProfileScreen extends StatelessWidget {
             Card(
               margin: const EdgeInsets.only(bottom: 24),
               elevation: 4,
+              color: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
@@ -113,6 +118,7 @@ class ProfileScreen extends StatelessWidget {
             // Action Buttons Section
             Card(
               elevation: 4,
+              color: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: Column(
                 children: [
@@ -160,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                 icon: const Icon(Icons.logout_rounded, color: Colors.white),
                 label: const Text('Logout', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent, // Retaining red for logout, but can be muted too
+                  backgroundColor: Color(0xff4facfe), // Retaining red for logout, but can be muted too
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
