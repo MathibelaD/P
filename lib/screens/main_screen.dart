@@ -3,6 +3,7 @@ import 'home_screen.dart';
 import '../models/property.dart';
 import 'login_screen.dart';
 import 'profile.dart';
+import 'favorites_screen.dart';
 
 // import your other screens when you add them
 
@@ -25,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
     final screens = [
       HomeScreen(properties: widget.properties),
       // Placeholder widgets for now; replace with real screens
-      const Center(child: Text('Favorites')),
+     FavoritesScreen(),
       const Center(child: Text('Add Listing')),
       const Center(child: Text('My Listings')),
     isLoggedIn
