@@ -2,8 +2,20 @@ import 'package:flutter/material.dart';
 import './models/property.dart';
 import './screens/main_screen.dart';
 import './screens/property_detail_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import './screens/supabase_test_screen.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL'] ?? '',
+    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
+  );
+
   runApp(MyApp());
 }
 
@@ -45,42 +57,6 @@ class MyApp extends StatelessWidget {
     contactPhoneNumber: '+27719876543',
     contactEmail: 'landlord.capetown@example.com',
   ),
-    // Property(
-    //   id: 'p1',
-    //   title: 'Cozy Apartment',
-    //   description: 'A cozy apartment in the city center.',
-    //   price: 1200,
-    //   imageUrl: 'assets/images/image1.jpg',
-    //   location: 'Cape Town',
-    //   type: "Apartment", bedrooms: null, bathrooms: null, areaSqFt: null, amenities: [], latitude: null, longitude: null, contactPhoneNumber: '', contactEmail: ''
-    // ),
-    // Property(
-    //   id: 'p2',
-    //   title: 'Ikhaya Lethu',
-    //   description: 'Spacious modern loft with a great view.',
-    //   price: 2000,
-    //   imageUrl: 'assets/images/image2.jpg',
-    //   location: 'Pretoria',
-    //   type: "Apartment"
-    // ),
-    // Property(
-    //   id: 'p3',
-    //   title: 'Modern Loft',
-    //   description: 'Spacious modern loft with a great view.',
-    //   price: 2000,
-    //   imageUrl: 'assets/images/image3.jpg',
-    //   location: 'Johhanesburg',
-    //   type: "Studio"
-    // ),
-    // Property(
-    //   id: 'p4',
-    //   title: 'Modern Loft',
-    //   description: 'Spacious modern loft with a great view.',
-    //   price: 2000,
-    //   imageUrl: 'assets/images/image4.jpg',
-    //   location: 'soshanguve',
-    //   type: "House"
-    // ),
   ];
 
   @override
@@ -94,6 +70,7 @@ class MyApp extends StatelessWidget {
      routes: {
       // register your named routes here
       PropertyDetailScreen.routeName: (ctx) => const PropertyDetailScreen(),
+      '/supabase-test': (ctx) => const SupabaseTestScreen(),
     },
     );
   }
