@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -13,6 +15,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  final _auth = AuthService();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,23 +123,62 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Print selected role for now
-                        print('Selected role: $selectedRole');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff4facfe),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        'Sign up',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: () async {
+                              print('Selected role: $selectedRole');
+
+                              setState(() => _isLoading = true);
+
+                              try {
+                                final response = await _auth.signUp(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                );
+print({response});
+                                if (response.user != null) {
+                                  // Save to metadata or insert to profiles table
+                                  await Supabase.instance.client
+                                      .from('profiles')
+                                      .insert({
+                                        'id': response.user!.id,
+                                        'full_name': nameController.text.trim(),
+                                        'role': selectedRole,
+                                      });
+
+                                  print('✅ Profile saved in DB!');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Account created!'),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                print('❌ Sign-up error: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')),
+                                );
+                              }
+
+                              setState(() => _isLoading = false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff4facfe),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Text(
+                              'Sign up',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                   ),
+
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
