@@ -147,6 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         'id': response.user!.id,
                                         'full_name': nameController.text.trim(),
                                         'role': selectedRole,
+                                        'email': emailController.text.trim(),
                                       });
 
                                   await Provider.of<ProfileProvider>(
