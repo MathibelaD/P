@@ -80,18 +80,12 @@ class _MainScreenState extends State<MainScreen> {
         const Center(child: Text('Manage Tenants')),
         const Center(
           child: Text('Add Listing'),
-        ), // TODO: replace with real Add Listing screen
+        ),
         const Center(
           child: Text('My Listings'),
-        ), // TODO: replace with real My Listings screen
+        ), 
           profile != null
-      ? ProfileScreen(
-          ownerName: profile.fullName,
-          ownerEmail: profile.email ?? 'unknown@example.com', // add email field to profile if you have it
-          avatarUrl: profile.avatarUrl ?? 'https://example.com/avatar.jpg', // optional avatar field
-          totalListings: 12, // replace with actual count if you fetch listings
-          activeListings: 7,
-        )
+      ? ProfileScreen(profile: profile)
       : const Center(child: CircularProgressIndicator()),
 
       ];
@@ -99,19 +93,15 @@ class _MainScreenState extends State<MainScreen> {
       // Tenant: show Home, Favorites, Profile
       bottomNavItems = const [
         BottomNavigationBarItem(icon: Icon(Icons.home_rounded), label: 'Home'),
+         BottomNavigationBarItem(icon: Icon(Icons.place_rounded), label: 'My Place'),
         BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
       ];
       screens = [
         HomeScreen(properties: widget.properties),
+        const Center(child: Text('Manage My Place')),
         FavoritesScreen(),
-        ProfileScreen(
-          ownerName: profile.fullName,
-          ownerEmail: 'your-email@example.com', // replace with real data
-          avatarUrl: 'https://example.com/avatar.jpg',
-          totalListings: 0,
-          activeListings: 0,
-        ),
+        ProfileScreen(profile: profile)
       ];
     }
 

@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final String ownerName;
-  final String ownerEmail;
-  final String? avatarUrl;
-  final int totalListings;
-  final int activeListings;
+  final UserProfile profile;
 
-  const ProfileScreen({
-    super.key,
-    required this.ownerName,
-    required this.ownerEmail,
-    this.avatarUrl,
-    this.totalListings = 0,
-    this.activeListings = 0,
-  });
+  const ProfileScreen({super.key, required this.profile});
+
 
   @override
   Widget build(BuildContext context) {
-  print('avatarUrl: $avatarUrl');
+  print('avatarUrl: ${profile.avatarUrl}');
     return Scaffold(
       backgroundColor: Colors.white, // Light background for the whole screen
       appBar: AppBar(
@@ -73,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      ownerName,
+                      profile.fullName,
                       style: const TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -82,7 +73,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      ownerEmail,
+                      profile.email ?? "",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey[600],
@@ -104,13 +95,13 @@ class ProfileScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildStatColumn('Total Listings', totalListings.toString(), Colors.purple.shade400, Icons.home_rounded),
+                    _buildStatColumn('Total Listings', "2", Colors.purple.shade400, Icons.home_rounded),
                     Container(
                       height: 60, // Divider height
                       width: 1, // Divider width
                       color: Colors.grey[300], // Divider color
                     ),
-                    _buildStatColumn('Active Listings', activeListings.toString(), Colors.teal.shade400, Icons.check_circle_rounded),
+                    _buildStatColumn('Active Listings', "20", Colors.teal.shade400, Icons.check_circle_rounded),
                   ],
                 ),
               ),
