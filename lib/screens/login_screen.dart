@@ -1,17 +1,67 @@
 // lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
+import '../providers/profile_provider.dart';
 import 'signup_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   final VoidCallback onLoginSuccess;
 
   const LoginScreen({super.key, required this.onLoginSuccess});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final response = await _authService.signIn(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+
+      if (response.user != null) {
+        print('✅ Login successful! User ID: ${response.user!.id}');
+
+        // Load profile data into provider
+        await Provider.of<ProfileProvider>(context, listen: false).loadUserProfile();
+
+        // Navigate to home
+        widget.onLoginSuccess();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login failed')),
+        );
+      }
+    } catch (e) {
+      print('❌ Login error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -37,11 +87,11 @@ class LoginScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       labelText: 'Email',
                       prefixIcon: const Icon(Icons.email),
-                      filled: true,
-                      labelStyle: TextStyle(
+                      labelStyle: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                       ),
+                      filled: true,
                       fillColor: Colors.grey[300],
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -55,7 +105,7 @@ class LoginScreen extends StatelessWidget {
                     obscureText: true,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      labelStyle: TextStyle(
+                      labelStyle: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                       ),
@@ -73,11 +123,10 @@ class LoginScreen extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // Add forgot password logic later
+                        // TODO: add forgot password logic
                       },
                       style: TextButton.styleFrom(
-                        foregroundColor:
-                            Colors.blue[700], // Your desired text color here
+                        foregroundColor: Colors.blue[700],
                       ),
                       child: const Text('Forgot password?'),
                     ),
@@ -86,22 +135,21 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Add login logic later
-                      onLoginSuccess();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff4facfe),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            onPressed: _handleLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff4facfe),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -117,8 +165,7 @@ class LoginScreen extends StatelessWidget {
                           );
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor:
-                              Colors.blue[700], // Your desired text color here
+                          foregroundColor: Colors.blue[700],
                         ),
                         child: const Text('Sign up'),
                       ),

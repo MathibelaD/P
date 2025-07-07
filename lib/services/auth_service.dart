@@ -30,6 +30,10 @@ class AuthService {
       'role': role,
     });
   }
+
+  final user = Supabase.instance.client.auth.currentUser;
+print('Current user: $user');
+
 }
 
 

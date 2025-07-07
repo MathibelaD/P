@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../models/property.dart';
 import '../widgets/property_card.dart';
 import '../widgets/filter_bar.dart';
+import '../providers/profile_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   final List<Property> properties;
@@ -18,21 +22,28 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
 
   @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  /// Helper: get "Good morning / afternoon / evening"
+  String getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Optionally filter the properties list
     final filteredProperties = widget.properties.where((p) {
-  final matchesFilter = selectedFilter == 'All' || (p.type.toLowerCase() == selectedFilter.toLowerCase());
-  final matchesSearch = p.title.toLowerCase().contains(searchQuery) ||
-                        p.location.toLowerCase().contains(searchQuery);
-  return matchesFilter && matchesSearch;
-}).toList();
-
-
-    @override
-    void dispose() {
-      searchController.dispose();
-      super.dispose();
-    }
+      final matchesFilter = selectedFilter == 'All' ||
+          (p.type.toLowerCase() == selectedFilter.toLowerCase());
+      final matchesSearch = p.title.toLowerCase().contains(searchQuery) ||
+          p.location.toLowerCase().contains(searchQuery);
+      return matchesFilter && matchesSearch;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -49,33 +60,88 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-        title: Row(
-          children: [
-            const Icon(Icons.home_rounded, color: Colors.white, size: 28),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Property Rentals',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.white,
+        title: Consumer<ProfileProvider>(
+          builder: (context, profileProvider, _) {
+            final profile = profileProvider.profile;
+
+            if (profileProvider.isLoading) {
+              return const Text('Loading...');
+            }
+            print("=======================================");
+print(profile);
+            if (profile != null) {
+              return Row(
+                children: [
+                  const Icon(Icons.home_rounded, color: Colors.white, size: 28),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${getGreeting()}, ${profile.fullName}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Text(
+                        "Find Your Perfect Home",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "Find Your Perfect Home",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white70,
+                ],
+              );
+            } else {
+              return Row(
+                children: const [
+                  Icon(Icons.home_rounded, color: Colors.white, size: 28),
+                  SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Property Rentals',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "Find Your Perfect Home",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              );
+            }
+          },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () async {
+              await Supabase.instance.client.auth.signOut();
+              Provider.of<ProfileProvider>(context, listen: false).clear();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Signed out')),
+              );
+              // Optionally navigate to login screen
+              // Navigator.of(context).pushReplacementNamed('/login');
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -102,7 +168,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
           FilterBar(
             selectedFilter: selectedFilter,
             onFilterSelected: (filter) {
@@ -115,8 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: ListView.builder(
               itemCount: filteredProperties.length,
-              itemBuilder: (ctx, i) =>
-                  PropertyCard(property: filteredProperties[i]),
+              itemBuilder: (ctx, i) => PropertyCard(property: filteredProperties[i]),
             ),
           ),
         ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/providers/profile_provider.dart';
+import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -136,7 +138,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   email: emailController.text.trim(),
                                   password: passwordController.text,
                                 );
-print({response});
                                 if (response.user != null) {
                                   // Save to metadata or insert to profiles table
                                   await Supabase.instance.client
@@ -146,6 +147,11 @@ print({response});
                                         'full_name': nameController.text.trim(),
                                         'role': selectedRole,
                                       });
+
+                                  await Provider.of<ProfileProvider>(
+                                    context,
+                                    listen: false,
+                                  ).loadUserProfile();
 
                                   print('✅ Profile saved in DB!');
                                   ScaffoldMessenger.of(context).showSnackBar(
