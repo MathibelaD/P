@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/providers/profile_provider.dart';
+import 'package:my_first_app/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -159,6 +160,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       content: Text('Account created!'),
                                     ),
                                   );
+
+                                  Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => MainScreen(
+            properties: [/* pass your properties list if needed */],
+          ),
+        ),
+      );
                                 }
                               } catch (e) {
                                 print('❌ Sign-up error: $e');

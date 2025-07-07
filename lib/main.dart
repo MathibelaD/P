@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import './models/property.dart';
 import './screens/main_screen.dart';
@@ -81,7 +82,12 @@ class MyApp extends StatelessWidget {
       // register your named routes here
       PropertyDetailScreen.routeName: (ctx) => const PropertyDetailScreen(),
       '/supabase-test': (ctx) => const SupabaseTestScreen(),
-    },
+       '/login': (ctx) => LoginScreen(
+        onLoginSuccess: () {
+          // after successful login, you might want to navigate to main/home screen
+          Navigator.of(ctx).pushReplacementNamed('/');
+        },
+      ),}
     );
   }
 }

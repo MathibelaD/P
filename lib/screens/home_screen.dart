@@ -67,8 +67,6 @@ class _HomeScreenState extends State<HomeScreen> {
             if (profileProvider.isLoading) {
               return const Text('Loading...');
             }
-            print("=======================================");
-print(profile);
             if (profile != null) {
               return Row(
                 children: [
@@ -129,19 +127,35 @@ print(profile);
           },
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              Provider.of<ProfileProvider>(context, listen: false).clear();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Signed out')),
-              );
-              // Optionally navigate to login screen
-              // Navigator.of(context).pushReplacementNamed('/login');
-            },
-          ),
-        ],
+  Consumer<ProfileProvider>(
+    builder: (context, profileProvider, _) {
+      if (profileProvider.profile != null) {
+        // ✅ User is logged in: show logout icon
+        return IconButton(
+          icon: const Icon(Icons.logout, color: Colors.white),
+          onPressed: () async {
+            await Supabase.instance.client.auth.signOut();
+            Provider.of<ProfileProvider>(context, listen: false).clear();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Signed out')),
+            );
+            // Optionally navigate to login screen:
+            // Navigator.of(context).pushReplacementNamed('/login');
+          },
+        );
+      } else {
+        // ❇️ Not logged in: show login icon
+        return IconButton(
+          icon: const Icon(Icons.login, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pushNamed('/login');
+          },
+        );
+      }
+    },
+  ),
+],
+
       ),
       body: Column(
         children: [

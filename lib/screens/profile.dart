@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String ownerName;
@@ -160,8 +161,10 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity, // Make it full width
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed:  () async {
                   // TODO: Add logout logic
+                  await Supabase.instance.client.auth.signOut();
+                  Navigator.of(context).pushNamed('/login');
                 },
                 icon: const Icon(Icons.logout_rounded, color: Colors.white),
                 label: const Text('Logout', style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white)),
