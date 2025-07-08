@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_first_app/screens/add_listing_screen.dart';
+import 'package:my_first_app/screens/my_listing_screen.dart';
 import 'package:provider/provider.dart';
 import '../models/property.dart';
 import '../providers/profile_provider.dart';
@@ -80,9 +81,7 @@ class _MainScreenState extends State<MainScreen> {
         HomeScreen(properties: widget.properties),
         const Center(child: Text('Manage Tenants')),
         AddListingScreen(),
-        const Center(
-          child: Text('My Listings'),
-        ), 
+        MyListingsScreen(),
           profile != null
       ? ProfileScreen(profile: profile)
       : const Center(child: CircularProgressIndicator()),
