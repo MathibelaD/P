@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:my_first_app/screens/my_listing_screen.dart';
 import '../services/storage_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -58,6 +59,8 @@ class _AddListingScreenState extends State<AddListingScreen> {
 
       if (imageUrl == null) throw Exception('Image upload failed');
 
+        if (!mounted) return;
+
       // Insert listing
       final userId = Supabase.instance.client.auth.currentUser?.id;
       await Supabase.instance.client.from('listings').insert({
@@ -72,12 +75,15 @@ class _AddListingScreenState extends State<AddListingScreen> {
         'area_sq_ft': double.parse(_areaController.text),
         'amenities': _amenitiesController.text.split(',').map((e) => e.trim()).toList(),
         'owner_id': userId,
-      });
+      }).select();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Listing added successfully!')),
       );
-      Navigator.of(context).pop(); // Go back after adding
+   Navigator.of(context).pushReplacement(
+  MaterialPageRoute(builder: (context) => MyListingsScreen()),
+);
+
     } catch (e) {
       print('❌ Add listing error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
