@@ -57,9 +57,26 @@ Future<void> _fetchListings() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+  onPressed: () {
+    Navigator.of(context).pushNamed('/add-listing'); // or your route
+  },
+  backgroundColor: const Color(0xff4facfe),
+  child: const Icon(Icons.add, color: Colors.white),
+),
+
       appBar: AppBar(
-        title: const Text('My Listings'),
-        backgroundColor: const Color(0xff4facfe),
+        title: Text("My Listings",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff4facfe), Color(0xff00f2fe)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: _fetchListings,

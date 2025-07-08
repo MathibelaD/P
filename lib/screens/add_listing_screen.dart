@@ -97,9 +97,18 @@ class _AddListingScreenState extends State<AddListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add New Listing'),
-        backgroundColor: const Color(0xff4facfe),
+       appBar: AppBar(
+        title: Text("Add New Listing",
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff4facfe), Color(0xff00f2fe)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),

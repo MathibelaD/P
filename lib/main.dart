@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_first_app/screens/add_listing_screen.dart';
 import 'package:my_first_app/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 import './models/property.dart';
@@ -82,6 +83,7 @@ class MyApp extends StatelessWidget {
       // register your named routes here
       PropertyDetailScreen.routeName: (ctx) => const PropertyDetailScreen(),
       '/supabase-test': (ctx) => const SupabaseTestScreen(),
+      '/add-listing': (ctx) => const AddListingScreen(),
        '/login': (ctx) => LoginScreen(
         onLoginSuccess: () {
           // after successful login, you might want to navigate to main/home screen
