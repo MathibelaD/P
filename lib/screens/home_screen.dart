@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/property.dart';
 import '../widgets/property_card.dart';
 import '../widgets/filter_bar.dart';
 import '../providers/profile_provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  final List<Property> properties;
-
-  const HomeScreen({super.key, required this.properties});
+  const HomeScreen({super.key, required List<Property> properties});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController searchController = TextEditingController();
+  List<Property> _allProperties = [];
   String selectedFilter = 'All';
   String searchQuery = '';
-  final TextEditingController searchController = TextEditingController();
+  bool _isLoading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProperties();
+  }
 
   @override
   void dispose() {
@@ -27,7 +34,32 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  /// Helper: get "Good morning / afternoon / evening"
+  Future<void> _fetchProperties() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final data = await Supabase.instance.client
+          .from('listings')
+          .select();
+
+      final fetched = data.map<Property>((item) => Property.fromMap(item)).toList();
+
+      setState(() {
+        _allProperties = fetched;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   String getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Good morning';
@@ -37,9 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredProperties = widget.properties.where((p) {
+    final filteredProperties = _allProperties.where((p) {
       final matchesFilter = selectedFilter == 'All' ||
-          (p.type.toLowerCase() == selectedFilter.toLowerCase());
+          p.type.toLowerCase() == selectedFilter.toLowerCase();
       final matchesSearch = p.title.toLowerCase().contains(searchQuery) ||
           p.location.toLowerCase().contains(searchQuery);
       return matchesFilter && matchesSearch;
@@ -127,78 +159,82 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         actions: [
-  Consumer<ProfileProvider>(
-    builder: (context, profileProvider, _) {
-      if (profileProvider.profile != null) {
-        // ✅ User is logged in: show logout icon
-        return IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white),
-          onPressed: () async {
-            await Supabase.instance.client.auth.signOut();
-            Provider.of<ProfileProvider>(context, listen: false).clear();
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Signed out')),
-            );
-            // Optionally navigate to login screen:
-            // Navigator.of(context).pushReplacementNamed('/login');
-          },
-        );
-      } else {
-        // ❇️ Not logged in: show login icon
-        return IconButton(
-          icon: const Icon(Icons.login, color: Colors.white),
-          onPressed: () {
-            Navigator.of(context).pushNamed('/login');
-          },
-        );
-      }
-    },
-  ),
-],
-
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-            child: TextField(
-              controller: searchController,
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search by title or location',
-                prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-          FilterBar(
-            selectedFilter: selectedFilter,
-            onFilterSelected: (filter) {
-              setState(() {
-                selectedFilter = filter;
-              });
+          Consumer<ProfileProvider>(
+            builder: (context, profileProvider, _) {
+              if (profileProvider.profile != null) {
+                return IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  onPressed: () async {
+                    await Supabase.instance.client.auth.signOut();
+                    Provider.of<ProfileProvider>(context, listen: false).clear();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Signed out')),
+                    );
+                  },
+                );
+              } else {
+                return IconButton(
+                  icon: const Icon(Icons.login, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/login');
+                  },
+                );
+              }
             },
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredProperties.length,
-              itemBuilder: (ctx, i) => PropertyCard(property: filteredProperties[i]),
-            ),
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(child: Text('Error: $_error', style: const TextStyle(color: Colors.red)))
+              : RefreshIndicator(
+                  onRefresh: _fetchProperties,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                        child: TextField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              searchQuery = value.toLowerCase();
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search by title or location',
+                            prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      FilterBar(
+                        selectedFilter: selectedFilter,
+                        onFilterSelected: (filter) {
+                          setState(() {
+                            selectedFilter = filter;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: filteredProperties.isEmpty
+                            ? const Center(child: Text('No properties found'))
+                            : ListView.builder(
+                                itemCount: filteredProperties.length,
+                                itemBuilder: (ctx, i) => PropertyCard(property: filteredProperties[i]),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
     );
   }
 }

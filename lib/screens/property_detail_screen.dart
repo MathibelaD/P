@@ -368,14 +368,14 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           ListTile(
                             leading: const Icon(Icons.phone, color: Colors.blue),
                             title: const Text('Call Landlord'),
-                            subtitle: Text(property.contactPhoneNumber),
-                            onTap: () => _makePhoneCall(property.contactPhoneNumber),
+                            subtitle: Text(property.contactPhoneNumber ?? ""),
+                            onTap: () => _makePhoneCall(property.contactPhoneNumber ?? ""),
                           ),
                           ListTile(
                             leading: const Icon(Icons.email, color: Colors.red),
                             title: const Text('Email Landlord'),
-                            subtitle: Text(property.contactEmail),
-                            onTap: () => _sendEmail(property.contactEmail, property.title, property.location), // Fixed here
+                            subtitle: Text(property.contactEmail ?? ""),
+                            onTap: () => _sendEmail(property.contactEmail ?? "", property.title, property.location), // Fixed here
                           ),
                         ],
                       ),

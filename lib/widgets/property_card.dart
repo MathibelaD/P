@@ -32,20 +32,24 @@ class PropertyCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   height: 180,
-                  child: Image.asset( // <--- CHANGED FROM Image.network to Image.asset
-                    property.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Fallback for missing local assets
-                      return Container(
-                        height: 180,
-                        width: double.infinity,
+                   child: property.imageUrl.contains('assets/')
+                  ? Image.asset(
+                      property.imageUrl,
+                      width: double.infinity,
+                      height: 250,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      property.imageUrl, // If you're using network images
+                      width: double.infinity,
+                      height: 250,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        height: 250,
                         color: Colors.grey[300],
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-                      );
-                    },
-                  ),
+                        child: const Center(child: Text('Image not available')),
+                      ),
+                    ),
                 ),
                 Positioned(
                   bottom: 0,

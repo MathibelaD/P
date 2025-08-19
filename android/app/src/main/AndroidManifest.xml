@@ -6,7 +6,7 @@
 
 
     <application
-        android:label="my_first_app"
+        android:label="City Crib"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
